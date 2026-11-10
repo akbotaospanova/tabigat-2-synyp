@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Табиғатқа қамқорлық жасаймыз — 2-сынып</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky0:#06235c; --sky1:#0b3f97; --sky2:#1663d6; --sky3:#3a9bff; --sky4:#a9dcff;
+  --sun:#ffd23f; --leaf:#2fcf6b; --leafd:#13924a; --coral:#ff6b6b; --ink:#0a1f44;
+  --paper:#ffffff; --cream:#fff8e6;
+  --r:26px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Nunito',system-ui,sans-serif; color:#fff; min-height:100vh;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(255,210,63,.35), transparent 60%),
+    radial-gradient(900px 700px at -10% 30%, rgba(58,155,255,.45), transparent 60%),
+    linear-gradient(180deg,var(--sky1) 0%, var(--sky2) 35%, #0d4fb8 70%, var(--sky0) 100%);
+  background-attachment:fixed; overflow-x:hidden;
+}
+h1,h2,h3,.disp{font-family:'Unbounded','Nunito',sans-serif;letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer;border:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* floating clouds */
+.clouds{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.13;filter:blur(1px);animation:drift linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:55%;height:160%;left:15%;top:-70%}
+.cloud::after{width:40%;height:130%;right:12%;top:-50%}
+@keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
+main,header,nav,footer{position:relative;z-index:1}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(6,35,92,.62);border-bottom:1px solid rgba(255,255,255,.12)}
+.topbar .wrap{display:flex;align-items:center;gap:14px;padding-top:10px;padding-bottom:10px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Unbounded';font-weight:700;font-size:15px;white-space:nowrap}
+.logo .dot{width:34px;height:34px;border-radius:12px;background:var(--sun);display:grid;place-items:center;color:var(--ink);font-size:18px;box-shadow:0 4px 0 #c99a00}
+.stations{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1}
+.stations::-webkit-scrollbar{display:none}
+.stations a{flex:none;color:#dcecff;text-decoration:none;font-weight:800;font-size:13px;padding:8px 12px;border-radius:999px;border:1.5px solid rgba(255,255,255,.18);transition:.2s}
+.stations a:hover,.stations a.on{background:#fff;color:var(--sky1);border-color:#fff}
+.score{display:flex;gap:8px;flex:none}
+.team{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 10px;border-radius:999px;font-weight:900;font-size:14px;color:var(--ink);transition:.25s;outline:3px solid transparent}
+.team.leaf{background:#c8f7d9}.team.drop{background:#cfe9ff}
+.team.active{outline-color:var(--sun);transform:translateY(-2px)}
+.team b{min-width:26px;text-align:center;background:#fff;border-radius:999px;padding:2px 8px}
+.team .pm{width:22px;height:22px;border-radius:50%;background:rgba(10,31,68,.12);font-weight:900;color:var(--ink);line-height:22px}
+
+/* hero */
+.hero{padding:64px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:34px;align-items:center}
+.kicker{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:999px;font-weight:800;font-size:14px}
+.hero h1{font-size:clamp(34px,5.4vw,64px);line-height:1.02;margin:18px 0 16px;font-weight:900}
+.hero h1 em{font-style:normal;color:var(--sun);display:block}
+.hero p.lead{font-size:19px;line-height:1.5;color:#e2f0ff;max-width:540px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.chip{background:#fff;color:var(--ink);font-weight:800;padding:10px 14px;border-radius:16px;box-shadow:0 5px 0 rgba(0,0,0,.18);font-size:15px}
+.chip.y{background:var(--sun)}
+.quote{margin-top:26px;padding:16px 20px;border-left:6px solid var(--sun);background:rgba(255,255,255,.08);border-radius:0 18px 18px 0;font-size:18px;font-weight:800}
+.quote small{display:block;font-weight:700;color:#b9d8ff;font-size:13px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+
+.globe{position:relative;aspect-ratio:1;max-width:440px;margin-left:auto;width:100%}
+.globe svg{width:100%;height:100%;filter:drop-shadow(0 30px 40px rgba(0,0,0,.35))}
+.spin{animation:spin 60s linear infinite;transform-origin:220px 220px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bob{animation:bob 4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+
+.kids{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.kid{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:26px;box-shadow:0 5px 0 rgba(0,0,0,.2)}
+.kid.l{background:#c8f7d9}.kid.d{background:#cfe9ff}
+
+/* section frame */
+section.st{padding:56px 0;scroll-margin-top:60px}
+.st-head{display:flex;align-items:flex-end;gap:18px;margin-bottom:26px;flex-wrap:wrap}
+.num{font-family:'Unbounded';font-weight:900;font-size:64px;line-height:.8;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.55)}
+.st-head h2{font-size:clamp(24px,3.4vw,38px);line-height:1.1}
+.st-head .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tag{font-size:13px;font-weight:800;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22)}
+.tag.v{background:var(--sun);color:var(--ink);border-color:var(--sun)}
+.panel{background:var(--paper);color:var(--ink);border-radius:var(--r);padding:26px;box-shadow:0 10px 0 rgba(3,20,60,.35),0 30px 60px rgba(0,0,0,.25)}
+.panel.glass{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.22);box-shadow:none}
+.hint{font-weight:800;color:#5a6f95;font-size:15px;margin-bottom:16px;display:flex;gap:8px;align-items:center}
+.panel.glass .hint{color:#cfe6ff}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:16px;padding:13px 20px;border-radius:16px;background:var(--sun);color:var(--ink);box-shadow:0 5px 0 #c99a00;transition:transform .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #c99a00}
+.btn.blue{background:var(--sky2);color:#fff;box-shadow:0 5px 0 #0a3f8f}
+.btn.ghost{background:#eef4ff;color:var(--sky1);box-shadow:0 5px 0 #c5d6f5}
+
+/* wave divider */
+.wave{height:60px;margin:0;display:block;width:100%}
+
+/* magic box */
+.box-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:center}
+.magic{position:relative;height:280px;display:grid;place-items:center;cursor:pointer;user-select:none}
+.mb-body{width:200px;height:140px;background:linear-gradient(135deg,#ff8a5b,#ff5e7e);border-radius:18px;position:relative;box-shadow:0 10px 0 #b8344f;margin-top:90px}
+.mb-body::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:30px;transform:translateX(-50%);background:var(--sun)}
+.mb-lid{position:absolute;width:224px;height:46px;background:linear-gradient(135deg,#ff9e70,#ff6a88);border-radius:14px;top:72px;left:50%;transform:translateX(-50%);transform-origin:10% 100%;transition:transform .7s cubic-bezier(.3,1.6,.5,1);box-shadow:0 6px 0 #c03d57;z-index:3}
+.mb-lid::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:32px;transform:translateX(-50%);background:var(--sun)}
+.magic.open .mb-lid{transform:translateX(-50%) rotate(-28deg) translateY(-30px)}
+.pop{position:absolute;font-size:44px;top:150px;left:50%;opacity:0;transition:all .8s cubic-bezier(.2,1.5,.4,1);z-index:2}
+.magic.open .pop{opacity:1}
+.magic.open .p1{transform:translate(-150px,-120px) rotate(-12deg)}
+.magic.open .p2{transform:translate(-60px,-170px) rotate(8deg)}
+.magic.open .p3{transform:translate(30px,-175px) rotate(-6deg)}
+.magic.open .p4{transform:translate(110px,-120px) rotate(14deg)}
+.pop{transform:translate(-22px,0)}
+.riddle{font-size:22px;font-weight:900;line-height:1.35}
+.riddle .ans{display:inline-block;margin-top:12px;padding:10px 16px;border-radius:14px;background:#e8fbef;color:var(--leafd);opacity:0;transform:scale(.8);transition:.4s}
+.riddle .ans.show{opacity:1;transform:none}
+.topic-reveal{margin-top:18px;padding:16px;border-radius:18px;background:var(--sky1);color:#fff;font-family:'Unbounded';font-weight:700;font-size:20px;display:none}
+.topic-reveal.show{display:block;animation:popin .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes popin{from{transform:scale(.6);opacity:0}}
+
+/* gift cards (flip) */
+.gifts{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.flip{perspective:900px;height:170px;cursor:pointer}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,1.4,.5,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-weight:900;text-align:center;padding:10px}
+.face.front{background:#fff;color:var(--ink);box-shadow:0 6px 0 rgba(0,0,0,.2)}
+.face.front .e{font-size:50px}
+.face.back{background:var(--leaf);color:#fff;transform:rotateY(180deg);box-shadow:0 6px 0 var(--leafd);font-size:17px}
+.face.back .e{font-size:30px}
+
+/* green / red game */
+.gr{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center}
+.situ{font-size:26px;font-weight:900;line-height:1.25;min-height:100px;display:flex;align-items:center;gap:16px}
+.situ .e{font-size:58px;flex:none}
+.gr-btns{display:flex;gap:14px}
+.sign{width:120px;height:120px;border-radius:50%;font-size:17px;font-weight:900;color:#fff;display:grid;place-items:center;text-align:center;line-height:1.1;transition:transform .12s}
+.sign:active{transform:scale(.92)}
+.sign.g{background:radial-gradient(circle at 35% 30%,#6af09a,var(--leafd));box-shadow:0 8px 0 #0b6b35}
+.sign.r{background:radial-gradient(circle at 35% 30%,#ff9a9a,#d93a3a);box-shadow:0 8px 0 #9c2323}
+.progress{display:flex;gap:6px;margin-top:20px}
+.progress i{flex:1;height:10px;border-radius:999px;background:#e5ecf8}
+.progress i.ok{background:var(--leaf)}.progress i.no{background:var(--coral)}
+.feedback{margin-top:14px;font-weight:800;font-size:18px;min-height:28px}
+.feedback.ok{color:var(--leafd)}.feedback.no{color:#c43030}
+
+/* break */
+.break{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center}
+.tree-sway{transform-origin:50% 100%;animation:sway 2.6s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.moves{display:grid;gap:12px}
+.move{display:flex;gap:14px;align-items:center;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.12);font-size:19px;font-weight:800;transition:.3s}
+.move.now{background:var(--sun);color:var(--ink);transform:scale(1.03)}
+.move .e{font-size:30px}
+
+/* sorting */
+.sort-top{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.turn{font-weight:900;padding:10px 16px;border-radius:14px;background:#eef4ff}
+.items{display:flex;flex-wrap:wrap;gap:12px;min-height:96px;padding:16px;border-radius:22px;background:#f2f6fd;border:2.5px dashed #c5d6f5;margin-bottom:20px}
+.item{width:84px;height:84px;border-radius:20px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:40px;box-shadow:0 5px 0 #cfdcf2;user-select:none;cursor:grab;transition:transform .15s}
+.item small{font-size:11px;font-weight:900;color:#5a6f95;margin-top:2px}
+.item.sel{transform:translateY(-6px) scale(1.06);outline:4px solid var(--sun)}
+.item.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.bins{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.bin{border-radius:22px 22px 30px 30px;padding:16px 10px 18px;text-align:center;color:#fff;font-weight:900;font-size:17px;position:relative;min-height:170px;transition:transform .15s}
+.bin::before{content:"";display:block;height:14px;border-radius:10px;background:rgba(0,0,0,.18);margin:-6px -2px 12px}
+.bin .e{font-size:40px;display:block;margin-bottom:4px}
+.bin .got{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;font-size:22px;margin-top:8px;min-height:28px}
+.bin.paper{background:#2f7bff;box-shadow:0 7px 0 #1650b8}
+.bin.plastic{background:#f5b700;box-shadow:0 7px 0 #b48500;color:var(--ink)}
+.bin.glass{background:#1fb35f;box-shadow:0 7px 0 #0d7a3c}
+.bin.food{background:#a0663a;box-shadow:0 7px 0 #6c4222}
+.bin.over{transform:scale(1.05)}
+.fact{margin-top:18px;padding:14px 16px;border-radius:16px;background:var(--cream);font-weight:800;color:#7a5600}
+
+/* jeopardy */
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cat{font-family:'Unbounded';font-weight:700;font-size:16px;text-align:center;padding:14px 8px;border-radius:18px;background:var(--sky0);color:#fff}
+.cell{height:96px;border-radius:20px;font-family:'Unbounded';font-weight:900;font-size:34px;color:var(--ink);background:linear-gradient(180deg,#ffe27a,var(--sun));box-shadow:0 7px 0 #c99a00;transition:.15s}
+.cell:hover{transform:translateY(-3px)}
+.cell.done{background:#e6edf8;color:#9fb1d1;box-shadow:0 7px 0 #c9d5ea;pointer-events:none;font-size:22px}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(3,15,45,.72);backdrop-filter:blur(6px);display:none;place-items:center;padding:20px}
+.modal.show{display:grid}
+.mcard{max-width:640px;width:100%;background:#fff;color:var(--ink);border-radius:30px;padding:30px;box-shadow:0 14px 0 rgba(0,0,0,.25);animation:popin .45s cubic-bezier(.2,1.6,.4,1);position:relative}
+.mcard .mc-cat{font-weight:900;color:var(--sky2);font-size:14px;text-transform:uppercase;letter-spacing:.08em}
+.mcard .q{font-size:clamp(22px,3vw,30px);font-weight:900;line-height:1.3;margin:12px 0 18px}
+.mcard .a{font-size:22px;font-weight:900;color:var(--leafd);background:#e8fbef;padding:14px 18px;border-radius:16px;display:none}
+.mcard .a.show{display:block}
+.mrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.ring{position:absolute;top:22px;right:24px;width:62px;height:62px}
+.ring text{font-family:'Unbounded';font-weight:900;font-size:22px;fill:var(--ink)}
+
+/* safety */
+.story{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.story .faces{font-size:64px;display:flex;gap:4px}
+.story p{font-size:20px;font-weight:800;line-height:1.45}
+.lights{display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center;margin-top:28px}
+.pole{background:#152a52;border-radius:40px;padding:18px;display:grid;gap:16px;box-shadow:0 10px 0 #0a1730,inset 0 0 0 4px #24407a;width:150px;margin:0 auto}
+.lamp{width:114px;height:114px;border-radius:50%;opacity:.28;transition:.3s;display:grid;place-items:center;font-family:'Unbounded';font-weight:900;font-size:14px;color:#fff;cursor:pointer}
+.lamp.red{background:#ff3b3b}.lamp.yel{background:#ffc400;color:var(--ink)}.lamp.grn{background:#22d36b}
+.lamp.on{opacity:1;box-shadow:0 0 40px 8px currentColor}
+.lamp.red.on{color:#fff;box-shadow:0 0 50px 10px rgba(255,59,59,.8)}
+.lamp.yel.on{box-shadow:0 0 50px 10px rgba(255,196,0,.8)}
+.lamp.grn.on{color:#fff;box-shadow:0 0 50px 10px rgba(34,211,107,.8)}
+.step-card{min-height:230px}
+.step-card h3{font-size:30px;margin-bottom:10px}
+.step-card p{font-size:20px;font-weight:800;line-height:1.5}
+.breath{display:flex;align-items:center;gap:18px;margin-top:16px}
+.bubble{width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9fd3ff);transition:transform 3s ease-in-out}
+.bubble.in{transform:scale(1.6)}
+.phrases{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.phrases span{background:#e8fbef;color:var(--leafd);font-weight:900;padding:9px 13px;border-radius:12px;font-size:16px}
+
+.quiz{display:grid;gap:14px}
+.qhead{display:flex;justify-content:space-between;font-weight:900;color:#5a6f95}
+.qtext{font-size:24px;font-weight:900;line-height:1.3;display:flex;gap:14px;align-items:center}
+.qtext .e{font-size:54px}
+.opt{width:100%;text-align:left;padding:16px 18px;border-radius:18px;background:#f2f6fd;font-size:18px;font-weight:800;color:var(--ink);border:3px solid transparent;transition:.15s;display:flex;gap:12px;align-items:center}
+.opt:hover{border-color:#bcd2f7}
+.opt.ok{background:#e1f9ea;border-color:var(--leaf)}
+.opt.no{background:#ffe6e6;border-color:var(--coral)}
+.opt .l{width:34px;height:34px;flex:none;border-radius:11px;background:#fff;display:grid;place-items:center;font-weight:900}
+.memo{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.memo div{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.22);border-radius:20px;padding:16px;text-align:center;font-weight:900;font-size:16px;line-height:1.3}
+.memo .e{font-size:38px;display:block;margin-bottom:6px}
+.slogan{margin-top:20px;text-align:center;font-family:'Unbounded';font-weight:900;font-size:clamp(20px,3vw,30px);line-height:1.3;color:var(--sun)}
+
+/* reflection */
+.refl{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+.rtree{position:relative}
+.rtree svg{width:100%;height:auto;display:block}
+.leafg{animation:grow .6s cubic-bezier(.2,1.6,.4,1)}
+@keyframes grow{from{transform:scale(0)}}
+.students{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stu{padding:12px 6px;border-radius:16px;background:#f2f6fd;font-weight:900;color:var(--ink);font-size:15px;border:3px solid transparent}
+.stu.sel{border-color:var(--sky2);background:#e3efff}
+.stu.done{background:#e1f9ea;color:var(--leafd)}
+.colors{display:grid;gap:10px;margin-bottom:14px}
+.col{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#f7f9fd;font-weight:800;font-size:16px;color:var(--ink);text-align:left;border:3px solid transparent}
+.col:hover{border-color:#cfdcf2}
+.col i{width:30px;height:30px;border-radius:50% 0;flex:none;transform:rotate(45deg)}
+.stems{background:var(--cream);border-radius:18px;padding:14px 16px;font-weight:800;color:#6b4e00;line-height:1.7}
+
+/* homework */
+.hw{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.hwc{border-radius:24px;padding:20px;color:var(--ink);background:#fff;box-shadow:0 8px 0 rgba(0,0,0,.2);position:relative;display:flex;flex-direction:column;gap:8px}
+.hwc .lvl{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;padding:5px 10px;border-radius:999px;align-self:flex-start}
+.hwc .e{font-size:44px}
+.hwc h3{font-size:17px;line-height:1.25}
+.hwc p{font-weight:700;font-size:15px;line-height:1.45;color:#34476e}
+.hwc .res{margin-top:auto;font-size:13px;font-weight:900;color:var(--sky2);padding-top:8px;border-top:2px dashed #e1e9f7}
+
+/* timer */
+.timer{position:fixed;right:18px;bottom:18px;z-index:60;background:#fff;color:var(--ink);border-radius:22px;padding:10px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.timer .t{font-family:'Unbounded';font-weight:900;font-size:20px;min-width:74px;text-align:center}
+.timer button{background:#eef4ff;color:var(--sky1);font-weight:900;border-radius:12px;padding:8px 10px;font-size:13px}
+.timer.ring-on{animation:shake .5s 3}
+
+footer{padding:40px 0 100px;text-align:center;color:#b9d8ff;font-weight:700}
+
+/* confetti */
+.cf{position:fixed;top:-20px;width:12px;height:16px;z-index:200;pointer-events:none;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:900px){
+  .hero-grid,.box-grid,.gr,.break,.lights,.refl,.story{grid-template-columns:1fr}
+  .globe{margin:0 auto;max-width:320px}
+  .gifts{grid-template-columns:repeat(3,1fr)}
+  .bins{grid-template-columns:repeat(2,1fr)}
+  .memo,.hw{grid-template-columns:repeat(2,1fr)}
+  .logo span{display:none}
+  .gr-btns{justify-content:center}
+}
+@media (max-width:560px){
+  .score .team span{display:none}
+  .cell{height:76px;font-size:24px}
+  .cat{font-size:12px}
+  .memo,.hw{grid-template-columns:1fr}
+  .situ{font-size:21px}
+  .sign{width:100px;height:100px;font-size:15px}
+  .timer{right:10px;bottom:10px;padding:6px;gap:4px}.timer .t{font-size:15px;min-width:56px}.timer button{padding:6px 8px}
+  .kid{width:44px;height:44px;font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="clouds" id="clouds"></div>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="logo"><div class="dot">🌍</div><span>Табиғат достары</span></div>
+    <nav class="stations" id="stations">
+      <a href="#start">Бастау</a>
+      <a href="#salem">Сәлемдесу</a>
+      <a href="#task1">1-тапсырма</a>
+      <a href="#sergitu">Сергіту</a>
+      <a href="#task2">2-тапсырма</a>
+      <a href="#task3">Зияткерлік алаң</a>
+      <a href="#safety">Қауіпсіздік</a>
+      <a href="#reflection">Рефлексия</a>
+      <a href="#homework">Үй тапсырмасы</a>
+    </nav>
+    <div class="score">
+      <div class="team leaf active" id="tm0">🍃<span>Жапырақтар</span><b id="sc0">0</b><button class="pm" data-t="0" data-d="1">+</button></div>
+      <div class="team drop" id="tm1">💧<span>Тамшылар</span><b id="sc1">0</b><button class="pm" data-t="1" data-d="1">+</button></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="start">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker">🌱 Сынып сағаты · 2-сынып · Әділдік және жауапкершілік айы</span>
+      <h1>Табиғатқа қамқорлық <em>жасаймыз!</em></h1>
+      <p class="lead">Бүгін біз табиғаттың бізге не сыйлайтынын білеміз, оған қалай көмектесуге болатынын ойнап үйренеміз, ал соңында достарымызбен қалай тату болуды талқылаймыз.</p>
+      <div class="chips">
+        <span class="chip y">⏱ 45 минут</span>
+        <span class="chip">👧👦 6 оқушы · 2 топ</span>
+        <span class="chip">🛡 Қауіпсіздік сабағы №13</span>
+      </div>
+      <div class="kids">
+        <div class="kid l">🍃</div><div class="kid l">🍃</div><div class="kid l">🍃</div>
+        <div class="kid d">💧</div><div class="kid d">💧</div><div class="kid d">💧</div>
+      </div>
+      <div class="quote"><small>Апта дәйексөзі</small>«Бір тал кессең, он тал ек»</div>
+    </div>
+    <div class="globe bob">
+      <svg viewBox="0 0 440 440" aria-hidden="true">
+        <defs>
+          <radialGradient id="gw" cx="35%" cy="30%"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#1663d6"/></radialGradient>
+          <clipPath id="gc"><circle cx="220" cy="220" r="170"/></clipPath>
+        </defs>
+        <circle cx="220" cy="220" r="205" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2" stroke-dasharray="4 10"/>
+        <circle cx="220" cy="220" r="170" fill="url(#gw)"/>
+        <g clip-path="url(#gc)"><g class="spin">
+          <path d="M90 160c30-40 80-50 110-30s20 60-10 70-60 40-90 20-40-30-10-60z" fill="#2fcf6b"/>
+          <path d="M250 110c40-10 90 20 100 60s-30 50-60 40-30 30-60 10 0-100 20-110z" fill="#2fcf6b"/>
+          <path d="M200 280c30-10 70 10 80 40s-30 50-60 40-50-70-20-80z" fill="#2fcf6b"/>
+          <path d="M330 270c20 0 40 20 30 40s-40 10-40-10 0-30 10-30z" fill="#2fcf6b"/>
+          <path d="M60 300c20-10 50 0 50 20s-30 30-50 20-10-30 0-40z" fill="#2fcf6b"/>
+        </g></g>
+        <circle cx="220" cy="220" r="170" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="3"/>
+        <ellipse cx="170" cy="150" rx="50" ry="24" fill="rgba(255,255,255,.25)" transform="rotate(-30 170 150)"/>
+        <!-- hands hugging -->
+        <path d="M60 300c-10 40 20 80 70 90 30 6 50-10 40-26s-40-6-60-26-30-50-50-38z" fill="#ffd23f"/>
+        <path d="M380 300c10 40-20 80-70 90-30 6-50-10-40-26s40-6 60-26 30-50 50-38z" fill="#ffd23f"/>
+        <!-- heart -->
+        <path d="M220 52c-12-22-48-14-46 12 2 20 46 44 46 44s44-24 46-44c2-26-34-34-46-12z" fill="#ff6b6b"/>
+        <!-- sun -->
+        <g transform="translate(372 72)"><circle r="30" fill="#ffd23f"/><g stroke="#ffd23f" stroke-width="6" stroke-linecap="round"><path d="M0-46v-10M0 46v10M-46 0h-10M46 0h10M33-33l7-7M-33 33l-7 7M33 33l7 7M-33-33l-7-7"/></g></g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 1 GREETING + MAGIC BOX -->
+<section class="st" id="salem">
+  <div class="wrap">
+    <div class="st-head"><div class="num">01</div><div><h2>Сәлемдесу және «Сиқырлы қобдиша»</h2><div class="meta"><span class="tag">Кіріспе · 7 мин</span><span class="tag v">Достық</span></div></div></div>
+    <div class="panel glass" style="margin-bottom:20px">
+      <div class="hint">☀️ Шеңбер құрып, қол ұстасып бірге айтамыз:</div>
+      <div class="disp" style="font-size:clamp(18px,2.6vw,26px);line-height:1.5;font-weight:700">Сәлем, көк аспан! ☁️ Сәлем, жасыл жер! 🌿<br>Сәлем, арайлы күн! ☀️ Сәлем, досым! 🤝</div>
+      <div class="slogan" style="text-align:left;margin-top:14px">«Біз – табиғаттың досымыз!»</div>
+    </div>
+    <div class="panel box-grid">
+      <div class="magic" id="magic" role="button" aria-label="Қобдишаны ашу">
+        <div class="pop p1">🍃</div><div class="pop p2">🪨</div><div class="pop p3">🪶</div><div class="pop p4">💧</div>
+        <div class="mb-lid"></div>
+        <div class="mb-body"></div>
+      </div>
+      <div>
+        <div class="hint">🎁 Қобдишаны бас — ішінде не бар екен?</div>
+        <div class="riddle">Жұмбақ: «Жаз киінеді,<br>қыс шешінеді». Бұл не?<br><span class="ans" id="rans">🌳 Ағаш!</span></div>
+        <div class="mrow"><button class="btn ghost" id="showAns">Жауабын көрсету</button><button class="btn blue" id="showTopic">Тақырыпты ашу</button></div>
+        <div class="topic-reveal" id="topic">Жапырақ, тас, қауырсын, су — бәрі табиғаттың сыйы!<br>Тақырып: «Табиғатқа қамқорлық жасаймыз»</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 TASK 1 -->
+<section class="st" id="task1">
+  <div class="wrap">
+    <div class="st-head"><div class="num">02</div><div><h2>1-тапсырма. Табиғат бізге не сыйлайды?</h2><div class="meta"><span class="tag">5 мин</span><span class="tag v">Қамқорлық</span><span class="tag v">Жауапкершілік</span></div></div></div>
+    <div class="hint" style="color:#cfe6ff">🃏 Карточканы бас — сыйын аш!</div>
+    <div class="gifts" id="gifts"></div>
+
+    <div class="panel" style="margin-top:28px">
+      <div class="hint">🚦 Ойын «Жасыл белгі – қызыл белгі»: табиғатқа пайдалы ма, әлде зиянды ма?</div>
+      <div class="gr">
+        <div class="situ" id="situ"></div>
+        <div class="gr-btns">
+          <button class="sign g" data-a="1">ПАЙДАЛЫ<br>👍</button>
+          <button class="sign r" data-a="0">ЗИЯНДЫ<br>✋</button>
+        </div>
+      </div>
+      <div class="feedback" id="grfb"></div>
+      <div class="progress" id="grprog"></div>
+      <div class="mrow"><button class="btn ghost" id="grReset">Қайта бастау</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- BREAK -->
+<section class="st" id="sergitu">
+  <div class="wrap">
+    <div class="st-head"><div class="num">✦</div><div><h2>Сергіту сәті «Жел мен ағаштар»</h2><div class="meta"><span class="tag">1 мин</span></div></div></div>
+    <div class="panel glass break">
+      <svg width="200" height="240" viewBox="0 0 200 240" aria-hidden="true">
+        <rect x="88" y="150" width="24" height="80" rx="8" fill="#8a5a33"/>
+        <g class="tree-sway"><circle cx="100" cy="100" r="62" fill="#2fcf6b"/><circle cx="62" cy="128" r="38" fill="#24b85d"/><circle cx="140" cy="128" r="38" fill="#24b85d"/><circle cx="84" cy="80" r="10" fill="#ff6b6b"/><circle cx="126" cy="110" r="10" fill="#ff6b6b"/></g>
+      </svg>
+      <div>
+        <div class="moves" id="moves">
+          <div class="move"><span class="e">🌬️</span>Жел соқты — ағаштар тербелді (қолды жоғары көтеріп, жан-жаққа тербеледі)</div>
+          <div class="move"><span class="e">🌧️</span>Жаңбыр жауды — жапырақтар дірілдеді (саусақтарды дірілдетеді)</div>
+          <div class="move"><span class="e">☀️</span>Күн шықты — бәрі күнге қол созды (аяқтың ұшына тұрып созылады)</div>
+          <div class="move"><span class="e">🌱</span>Ағаштар өсті — орнымызға отырдық!</div>
+        </div>
+        <div class="mrow"><button class="btn" id="moveGo">▶ Бастау</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 TASK 2 SORTING -->
+<section class="st" id="task2">
+  <div class="wrap">
+    <div class="st-head"><div class="num">03</div><div><h2>2-тапсырма. Қоқысты өз үйіне жеткіз!</h2><div class="meta"><span class="tag">Интерактивті ойын · 6 мин</span><span class="tag v">Ұқыптылық</span><span class="tag v">Жауапкершілік</span></div></div></div>
+    <div class="panel">
+      <div class="sort-top">
+        <div class="hint" style="margin:0">👆 Затты бас, сосын дұрыс жәшікті бас (немесе сүйреп апар)</div>
+        <div class="turn" id="sortTurn"></div>
+      </div>
+      <div class="items" id="items"></div>
+      <div class="bins">
+        <div class="bin paper" data-bin="paper"><span class="e">📄</span>ҚАҒАЗ<div class="got"></div></div>
+        <div class="bin plastic" data-bin="plastic"><span class="e">🧴</span>ПЛАСТИК<div class="got"></div></div>
+        <div class="bin glass" data-bin="glass"><span class="e">🫙</span>ШЫНЫ<div class="got"></div></div>
+        <div class="bin food" data-bin="food"><span class="e">🍂</span>ТАҒАМ ҚАЛДЫҒЫ<div class="got"></div></div>
+      </div>
+      <div class="fact" id="sortFact">💡 Білесің бе? Пластик бөтелке жерде жүздеген жыл бойы шірімей жатады. Сондықтан қоқысты сұрыптаймыз!</div>
+      <div class="mrow"><button class="btn ghost" id="sortReset">Қайта ойнау</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 TASK 3 JEOPARDY -->
+<section class="st" id="task3">
+  <div class="wrap">
+    <div class="st-head"><div class="num">04</div><div><h2>3-тапсырма. Зияткерлік алаң</h2><div class="meta"><span class="tag">8 мин</span><span class="tag v">Әділдік</span><span class="tag v">Ынтымақтастық</span></div></div></div>
+    <div class="panel glass" style="margin-bottom:18px">
+      <div class="hint" style="margin:0">⚖️ Әділ ойын ережесі: топтар кезекпен ұяшық таңдайды · 20 секунд бірге ойлайды · жауапты әр жолы басқа оқушы айтады · дұрыс жауапқа қарсылас топ та қол соғады!</div>
+    </div>
+    <div class="board" id="board"></div>
+  </div>
+</section>
+
+<!-- 5 SAFETY -->
+<section class="st" id="safety">
+  <div class="wrap">
+    <div class="st-head"><div class="num">05</div><div><h2>Қауіпсіздік сабағы №13. Достарыңмен жанжалдасқан жағдайда не істеу керек?</h2><div class="meta"><span class="tag">10 мин</span><span class="tag v">Татулық</span><span class="tag v">Әділдік</span></div></div></div>
+
+    <div class="panel story">
+      <div class="faces">👧🌷👦</div>
+      <div>
+        <div class="hint" style="margin-bottom:8px">📖 Жағдай</div>
+        <p>Айша мен Әли сыныптағы гүлді кім суарады деп таласып қалды. Су төгіліп, екеуі бір-біріне айқайлады. Гүл де, достық та зардап шекті...</p>
+        <p style="color:var(--sky2);margin-top:8px">❓ Балалар не сезінді? Айқай көмектесті ме?</p>
+      </div>
+    </div>
+
+    <div class="lights">
+      <div class="pole">
+        <div class="lamp red on" data-l="0">ТОҚТА</div>
+        <div class="lamp yel" data-l="1">ОЙЛА</div>
+        <div class="lamp grn" data-l="2">СӨЙЛЕС</div>
+      </div>
+      <div class="panel step-card" id="stepCard"></div>
+    </div>
+
+    <div class="panel" style="margin-top:28px">
+      <div class="hint">🎮 Ойын «Досыма қалай жауап беремін?»</div>
+      <div class="quiz" id="quiz"></div>
+    </div>
+
+    <div class="panel glass" style="margin-top:28px">
+      <div class="hint">🎭 Рөлдік ойын «Татуласу сахнасы» — 3 жұп, 3 жағдай: доп үшін талас · қарындашты сұрамай алу · ойынға қоспау. Алдымен «Бағдаршам» арқылы тоқта — ойла — сөйлес!</div>
+      <h3 style="margin:18px 0 12px">📌 Жадынама</h3>
+      <div class="memo">
+        <div><span class="e">🚫👊</span>Төбелеспе</div>
+        <div><span class="e">🤐</span>Жаман сөз айтпа</div>
+        <div><span class="e">💔</span>Кек сақтама, кешіре біл</div>
+        <div><span class="e">🧑‍🏫</span>Шеше алмасаң — үлкендерге айт</div>
+      </div>
+      <div class="slogan">«Ашуды жеңеміз, сөйлесіп шешеміз,<br>достықты сақтаймыз!»</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 REFLECTION -->
+<section class="st" id="reflection">
+  <div class="wrap">
+    <div class="st-head"><div class="num">06</div><div><h2>Рефлексия «Тілек ағашы»</h2><div class="meta"><span class="tag">Қорытынды · 8 мин</span><span class="tag v">Жауапкершілік</span></div></div></div>
+    <div class="refl">
+      <div class="panel glass rtree">
+        <svg viewBox="0 0 400 400" id="rtree">
+          <ellipse cx="200" cy="380" rx="150" ry="14" fill="rgba(0,0,0,.18)"/>
+          <path d="M176 380 C184 330 186 290 188 250 L212 250 C214 290 216 330 224 380 Z" fill="#8a5a33"/>
+          <g stroke="#8a5a33" stroke-linecap="round" fill="none">
+            <path d="M200 260 C200 210 198 170 200 120" stroke-width="20"/>
+            <path d="M196 236 C160 222 128 206 104 182" stroke-width="13"/>
+            <path d="M202 200 C236 188 262 170 292 146" stroke-width="13"/>
+            <path d="M200 140 C184 116 168 96 150 78" stroke-width="10"/>
+            <path d="M201 140 C220 110 238 90 255 70" stroke-width="10"/>
+            <path d="M200 160 C212 176 220 188 228 200" stroke-width="8"/>
+          </g>
+          <g id="leaves"></g>
+        </svg>
+        <div style="text-align:center;font-weight:900;margin-top:6px" id="leafCount">0 / 6 жапырақ</div>
+      </div>
+      <div class="panel">
+        <div class="hint">1) Өз нөміріңді таңда</div>
+        <div class="students" id="students"></div>
+        <div class="hint">2) Жапырағыңның түсін таңда</div>
+        <div class="colors">
+          <button class="col" data-c="#2fcf6b"><i style="background:#2fcf6b"></i>Бәрі түсінікті, табиғатқа көмектесуді білемін!</button>
+          <button class="col" data-c="#ffc400"><i style="background:#ffc400"></i>Кейбір нәрсені әлі де қайталағым келеді</button>
+          <button class="col" data-c="#ff6b6b"><i style="background:#ff6b6b"></i>Маған әлі көмек керек</button>
+        </div>
+        <div class="stems">🗣 Сөйлемді аяқта:<br>1. «Бүгін мен білдім, табиғат бізге...»<br>2. «Мен табиғат үшін ертең ... істеймін»<br>3. «Досыммен ренжіссем, алдымен ...»</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 HOMEWORK -->
+<section class="st" id="homework">
+  <div class="wrap">
+    <div class="st-head"><div class="num">07</div><div><h2>Үй тапсырмасы «Менің жасыл ісім»</h2><div class="meta"><span class="tag">Келесі сынып сағатына дейін</span></div></div></div>
+    <div class="hw">
+      <div class="hwc"><span class="lvl" style="background:#e1f9ea;color:#13924a">Міндетті</span><span class="e">🪴</span><h3>Бір жасыл іс жаса</h3><p>Ата-анаңмен бірге гүл суар, құстарға жем сал немесе аулада қоқыс жина. Сол істің суретін сал.</p><div class="res">Нәтиже: 1 сурет + «Мен бүгін табиғат үшін...»</div></div>
+      <div class="hwc"><span class="lvl" style="background:#ffe6e6;color:#c43030">Қауіпсіздік</span><span class="e">🚦</span><h3>«Бағдаршамды» үйрет</h3><p>Ереженің 3 қадамын үйдегілерге айтып бер. Апта бойы досыңмен тату ойнауға тырыс.</p><div class="res">Нәтиже: ата-ана күнделікке белгі қояды</div></div>
+      <div class="hwc"><span class="lvl" style="background:#e3efff;color:#1663d6">Қосымша А</span><span class="e">📜</span><h3>Шағын плакат</h3><p>«Табиғатты қорғаудың 3 ережесі» атты плакат жаса: әр ережеге бір сурет.</p><div class="res">Нәтиже: 3 ереже + сурет</div></div>
+      <div class="hwc"><span class="lvl" style="background:#fff3c4;color:#8a6400">Қосымша В</span><span class="e">🐦</span><h3>Құстарға үй</h3><p>Ата-анаңмен бірге пластик бөтелкеден жемсауыт жасап, аулаға іл.</p><div class="res">Нәтиже: «Жасыл істер көрмесіне» фото</div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>Сынып сағаты «Табиғатқа қамқорлық жасаймыз» · 2-сынып · Әділдік және жауапкершілік айы</footer>
+
+<div class="timer" id="timer">
+  <span>⏱</span><span class="t" id="tt">00:00</span>
+  <button data-m="1">1′</button><button data-m="3">3′</button><button data-m="5">5′</button><button id="tstop">■</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="mcard">
+    <svg class="ring" viewBox="0 0 62 62"><circle cx="31" cy="31" r="27" fill="none" stroke="#e6edf8" stroke-width="6"/><circle id="ringc" cx="31" cy="31" r="27" fill="none" stroke="#ffd23f" stroke-width="6" stroke-linecap="round" stroke-dasharray="170" stroke-dashoffset="0" transform="rotate(-90 31 31)"/><text x="31" y="39" text-anchor="middle" id="ringt">20</text></svg>
+    <div class="mc-cat" id="mcCat"></div>
+    <div class="q" id="mcQ"></div>
+    <div class="a" id="mcA"></div>
+    <div class="mrow">
+      <button class="btn ghost" id="mcShow">Жауабы</button>
+      <button class="btn" id="mcW0" style="background:#c8f7d9;box-shadow:0 5px 0 #7fd6a0">🍃 Жапырақтарға</button>
+      <button class="btn" id="mcW1" style="background:#cfe9ff;box-shadow:0 5px 0 #86bdf0">💧 Тамшыларға</button>
+      <button class="btn blue" id="mcClose">Жабу</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* clouds */
+const cl=$('#clouds');
+for(let i=0;i<7;i++){const c=document.createElement('div');c.className='cloud';const w=120+Math.random()*220;c.style.width=w+'px';c.style.height=w*.32+'px';c.style.top=(Math.random()*90)+'%';c.style.animationDuration=(60+Math.random()*80)+'s';c.style.animationDelay=(-Math.random()*120)+'s';cl.appendChild(c)}
+
+/* sound */
+let ac=null;
+function tone(ok){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);const t=ac.currentTime;if(ok){o.frequency.setValueAtTime(660,t);o.frequency.setValueAtTime(880,t+.1)}else{o.type='square';o.frequency.setValueAtTime(220,t);o.frequency.setValueAtTime(170,t+.12)}g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.start(t);o.stop(t+.36)}catch(e){}}
+function confetti(n){n=n||60;const cols=['#ffd23f','#2fcf6b','#ff6b6b','#3a9bff','#fff'];for(let i=0;i<n;i++){const c=document.createElement('div');c.className='cf';c.style.left=Math.random()*100+'vw';c.style.background=cols[i%5];c.style.animationDuration=(1.6+Math.random()*1.8)+'s';c.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}}
+
+/* teams */
+const score=[0,0]; let active=0;
+function renderScore(){$('#sc0').textContent=score[0];$('#sc1').textContent=score[1];$('#tm0').classList.toggle('active',active===0);$('#tm1').classList.toggle('active',active===1);const st=$('#sortTurn');if(st)st.textContent='Кезек: '+(active?'💧 Тамшылар':'🍃 Жапырақтар')}
+function add(t,n){score[t]+=n;renderScore()}
+$$('.pm').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();add(+b.dataset.t,1);tone(true)}));
+$('#tm0').addEventListener('click',()=>{active=0;renderScore()});
+$('#tm1').addEventListener('click',()=>{active=1;renderScore()});
+function nextTurn(){active=1-active;renderScore()}
+
+/* nav highlight */
+const links=$$('#stations a');
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
+$$('main section[id]').forEach(s=>io.observe(s));
+
+/* magic box */
+$('#magic').addEventListener('click',function(){this.classList.toggle('open');tone(true)});
+$('#showAns').addEventListener('click',()=>{$('#rans').classList.add('show');tone(true)});
+$('#showTopic').addEventListener('click',()=>{$('#topic').classList.add('show');$('#magic').classList.add('open');confetti(40)});
+
+/* gifts */
+const gifts=[['🌳','Ағаш','💨','Таза ауа, көлеңке'],['💧','Су','❤️','Өмір, тазалық'],['☀️','Күн','🔥','Жылу мен жарық'],['🟫','Топырақ','🍞','Нан, жеміс-жидек'],['🐦','Құстар','🎶','Әуенді ән'],['🌸','Гүлдер','✨','Әсемдік, бал']];
+$('#gifts').innerHTML=gifts.map(g=>`<div class="flip"><div class="flip-in"><div class="face front"><span class="e">${g[0]}</span>${g[1]}</div><div class="face back"><span class="e">${g[2]}</span>${g[3]}</div></div></div>`).join('');
+$$('.flip').forEach(f=>f.addEventListener('click',()=>{f.classList.toggle('on');tone(true)}));
+
+/* green/red */
+const sit=[['🌱','Ағаш көшетін отырғызу',1,'Иә! Ағаш бізге таза ауа береді.'],['🌿','Ағаштың бұтағын сындыру',0,'Ағаш ауырады, оған зиян келеді.'],['🐦','Қыста құстарға жемсауыт ілу',1,'Құстар аш қалмайды!'],['🗑️','Қоқысты орманға тастап кету',0,'Қоқыс табиғатты ластайды, жануарларға қауіпті.'],['🚰','Тісті жуғанда суды бекер ағызу',0,'Суды үнемдейміз — жабық ұстаймыз.'],['🌷','Саябақтағы гүлдерді жұлу',0,'Гүлге қараймыз, бірақ жұлмаймыз.'],['♻️','Қоқысты сұрыптап тастау',1,'Керемет! Қоқыс қайта өңделеді.'],['🐜','Құмырсқаның илеуін бұзу',0,'Құмырсқалар да табиғаттың еңбекқор досы.']];
+let gi=0; const res=[];
+function drawGR(){const p=$('#grprog');p.innerHTML=sit.map((_,i)=>`<i class="${res[i]===1?'ok':res[i]===0?'no':''}"></i>`).join('');if(gi>=sit.length){$('#situ').innerHTML='<span class="e">🏆</span>Жарайсыңдар! Барлық жағдай талқыланды.';confetti();return}$('#situ').innerHTML=`<span class="e">${sit[gi][0]}</span>${sit[gi][1]}`}
+$$('.sign').forEach(b=>b.addEventListener('click',()=>{if(gi>=sit.length)return;const ok=(+b.dataset.a)===sit[gi][2];res[gi]=ok?1:0;const fb=$('#grfb');fb.className='feedback '+(ok?'ok':'no');fb.textContent=(ok?'✅ Дұрыс! ':'❌ Ойланайық: ')+sit[gi][3];tone(ok);if(ok)add(active,1);nextTurn();gi++;setTimeout(drawGR,250)}));
+$('#grReset').addEventListener('click',()=>{gi=0;res.length=0;$('#grfb').textContent='';drawGR()});
+drawGR();
+
+/* break */
+$('#moveGo').addEventListener('click',()=>{const ms=$$('.move');let k=0;ms.forEach(m=>m.classList.remove('now'));const step=()=>{ms.forEach(m=>m.classList.remove('now'));if(k<ms.length){ms[k].classList.add('now');tone(true);k++;setTimeout(step,6000)}};step()});
+
+/* sorting */
+const junk=[['📰','Газет','paper'],['📦','Қорап','paper'],['🧴','Бөтелке','plastic'],['🛍️','Пакет','plastic'],['🫙','Банка','glass'],['🍾','Шыны','glass'],['🍎','Алма','food'],['🍌','Қабық','food']];
+let sel=null;
+function buildSort(){const box=$('#items');box.innerHTML='';[...junk].sort(()=>Math.random()-.5).forEach(j=>{const d=document.createElement('div');d.className='item';d.draggable=true;d.dataset.bin=j[2];d.dataset.e=j[0];d.innerHTML=`${j[0]}<small>${j[1]}</small>`;d.addEventListener('click',()=>{$$('.item').forEach(x=>x.classList.remove('sel'));sel=d;d.classList.add('sel')});d.addEventListener('dragstart',e=>{sel=d;try{e.dataTransfer.setData('text','x')}catch(_){}});box.appendChild(d)});$$('.bin .got').forEach(g=>g.innerHTML='');renderScore()}
+function drop(bin){if(!sel)return;const ok=sel.dataset.bin===bin.dataset.bin;if(ok){bin.querySelector('.got').insertAdjacentHTML('beforeend',`<span>${sel.dataset.e}</span>`);sel.remove();tone(true);add(active,1);if(!$('#items').children.length){$('#sortFact').textContent='🎉 Барлық қоқыс өз үйіне жетті! Табиғат сендерге рахмет айтады!';confetti()}}else{sel.classList.remove('shake');void sel.offsetWidth;sel.classList.add('shake');tone(false)}sel.classList.remove('sel');sel=null;nextTurn()}
+$$('.bin').forEach(b=>{b.addEventListener('click',()=>drop(b));b.addEventListener('dragover',e=>{e.preventDefault();b.classList.add('over')});b.addEventListener('dragleave',()=>b.classList.remove('over'));b.addEventListener('drop',e=>{e.preventDefault();b.classList.remove('over');drop(b)})});
+$('#sortReset').addEventListener('click',()=>{$('#sortFact').textContent='💡 Білесің бе? Пластик бөтелке жерде жүздеген жыл бойы шірімей жатады. Сондықтан қоқысты сұрыптаймыз!';buildSort()});
+buildSort();
+
+/* jeopardy */
+const cats=[
+ ['🧩 Жұмбақ',[[10,'«Жаз киінеді, қыс шешінеді». Бұл не?','🌳 Ағаш'],[20,'«Қанаты бар, құс емес, гүлден гүлге қонады». Бұл кім?','🦋 Көбелек'],[30,'«Ақ көрпе жерді жапты, көктем келсе жоқ болды». Бұл не?','❄️ Қар']]],
+ ['📜 Мақал-мәтел',[[10,'Мақалды аяқта: «Бір тал кессең, ... тал ек»','Он — «Бір тал кессең, он тал ек»'],[20,'Мақалды аяқта: «Су – ... көзі»','Тіршілік — «Су – тіршілік көзі»'],[30,'Мақалды аяқта: «Ағаш көркі – жапырақ, адам көркі – ...»','Шүберек (киім)']]],
+ ['💡 Ойла да тап',[[10,'Біздің ойында қағазды қай түсті жәшікке салдық?','🟦 Көк жәшікке'],[20,'Ағаш бізге не береді? Екі мысал айт.','Таза ауа, көлеңке, жеміс, қағаз, құстарға үй'],[30,'Неліктен орманда от жағуға болмайды?','Өрт шығуы мүмкін: ағаштар мен жануарлар зардап шегеді']]]
+];
+const board=$('#board');
+board.innerHTML=cats.map(c=>`<div class="cat">${c[0]}</div>`).join('');
+for(let r=0;r<3;r++)for(let c=0;c<3;c++){const b=document.createElement('button');b.className='cell';b.textContent=cats[c][1][r][0];b.addEventListener('click',()=>openQ(c,r,b));board.appendChild(b)}
+let cur=null,tmr=null;
+function openQ(c,r,btn){cur={c,r,btn};const q=cats[c][1][r];$('#mcCat').textContent=cats[c][0]+' · '+q[0]+' ұпай';$('#mcQ').textContent=q[1];$('#mcA').textContent=q[2];$('#mcA').classList.remove('show');$('#modal').classList.add('show');let s=20;const rc=$('#ringc'),rt=$('#ringt');rc.style.transition='none';rc.style.strokeDashoffset=0;rt.textContent=s;clearInterval(tmr);requestAnimationFrame(()=>{rc.style.transition='stroke-dashoffset 20s linear';rc.style.strokeDashoffset=170});tmr=setInterval(()=>{s--;rt.textContent=Math.max(s,0);if(s<=0){clearInterval(tmr);tone(false)}},1000)}
+function closeQ(){clearInterval(tmr);$('#modal').classList.remove('show')}
+$('#mcShow').addEventListener('click',()=>{$('#mcA').classList.add('show');tone(true)});
+[0,1].forEach(t=>$('#mcW'+t).addEventListener('click',()=>{if(!cur)return;add(t,cats[cur.c][1][cur.r][0]);cur.btn.classList.add('done');cur.btn.textContent=t?'💧':'🍃';tone(true);confetti(30);closeQ();cur=null;checkBoard()}));
+$('#mcClose').addEventListener('click',()=>{if(cur){cur.btn.classList.add('done');cur.btn.textContent='✓'}closeQ();cur=null;checkBoard()});
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeQ()});
+function checkBoard(){if(!$$('.cell:not(.done)').length){setTimeout(()=>confetti(120),200)}}
+
+/* traffic light */
+const steps=[
+ {c:'#ff3b3b',t:'🔴 ТОҚТА!',p:'Ашуланып тұрсаң — тоқта. Ештеңе айтпа, ештеңе істеме. 3 рет терең дем ал, 5-ке дейін сана.',breath:true},
+ {c:'#d99a00',t:'🟡 ОЙЛА!',p:'Не болды? Досым не сезінді? Мен не сезіндім? Бұл мәселені қалай шешуге болады?'},
+ {c:'#13924a',t:'🟢 СӨЙЛЕС!',p:'Айқайламай, сабырмен айт. Кезектесуді немесе бірге істеуді ұсын. Шеше алмасаң — мұғалімге не ата-анаға айт.',ph:['«Мен ренжідім, себебі...»','«Кешір мені»','«Кезекпен істейік»','«Бірге ойнайық!»']}
+];
+function setStep(i){$$('.lamp').forEach((l,k)=>l.classList.toggle('on',k===i));const s=steps[i];let h=`<h3 style="color:${s.c}">${s.t}</h3><p>${s.p}</p>`;if(s.breath)h+=`<div class="breath"><div class="bubble" id="bub"></div><button class="btn blue" id="bgo">Бірге дем алайық</button><span id="btxt" style="font-weight:900;font-size:18px"></span></div>`;if(s.ph)h+=`<div class="phrases">${s.ph.map(x=>`<span>${x}</span>`).join('')}</div>`;h+=`<div class="mrow">${i<2?'<button class="btn" id="nextL">Келесі шам →</button>':'<button class="btn" id="nextL">Басынан ↺</button>'}</div>`;$('#stepCard').innerHTML=h;$('#nextL').addEventListener('click',()=>{setStep(i<2?i+1:0);tone(true)});if(s.breath)$('#bgo').addEventListener('click',breathe)}
+function breathe(){const b=$('#bub'),t=$('#btxt');let n=0;const cyc=()=>{if(n>=3){t.textContent='Жарайсың! Енді сабырлысың 😊';return}n++;b.classList.add('in');t.textContent=n+'-дем: ішке тарт...';setTimeout(()=>{b.classList.remove('in');t.textContent=n+'-дем: сыртқа шығар...';setTimeout(cyc,3000)},3000)};cyc()}
+$$('.lamp').forEach(l=>l.addEventListener('click',()=>{setStep(+l.dataset.l);tone(true)}));
+setStep(0);
+
+/* safety quiz */
+const qs=[
+ ['🧸','Досың сенің ойыншығыңды сұрамай алып кетті. Не істейсің?',['Тартып аламын да, итеріп жіберемін','«Маған айтпай алғаның ұнамады. Кезекпен ойнайық»','Жылап, онымен енді сөйлеспеймін'],1],
+ ['⚽','Футбол ойнағанда гол болды ма, жоқ па деп таластыңдар.',['Тоқтаймын, ереже бойынша мұғалімнен сұраймыз','Айқайлап, ойыннан кетіп қаламын','Допты алып, үйге қашамын'],0],
+ ['😠','Досың саған ренжітетін сөз айтты.',['Мен де оған жаман сөз айтамын','Оны ұрып жіберемін','«Бұл сөзің мені ренжітті, олай айтпашы»'],2],
+ ['🎨','Сен абайсызда досыңның суретін бүлдіріп алдың.',['Ешкімге айтпай, кетіп қаламын','«Кешір, әдейі істеген жоқпын. Бірге түзетейік»','«Сенің суретің онсыз да әдемі емес»'],1],
+ ['🧒','Үлкен бала сені қорқытып, ұрмақ болды.',['Ешкімге айтпаймын','Мен де оны ұрамын','Бірден мұғалімге немесе ата-анама айтамын'],2]
+];
+let qi=0,qok=0;
+function drawQ(){const z=$('#quiz');if(qi>=qs.length){z.innerHTML=`<div class="qtext"><span class="e">🤝</span>Жарайсыңдар! ${qs.length} жағдайдың ${qok} дұрыс шешілді. Сендер — нағыз тату достарсыңдар!</div><button class="btn ghost" id="qre" style="justify-self:start">Қайта ойнау</button>`;$('#qre').addEventListener('click',()=>{qi=0;qok=0;drawQ()});confetti();return}const q=qs[qi];z.innerHTML=`<div class="qhead"><span>Жағдай ${qi+1} / ${qs.length}</span><span>✅ ${qok}</span></div><div class="qtext"><span class="e">${q[0]}</span>${q[1]}</div>`+q[2].map((o,k)=>`<button class="opt" data-k="${k}"><span class="l">${'АӘБ'[k]}</span>${o}</button>`).join('');let done=false;$$('.opt').forEach(b=>b.addEventListener('click',()=>{if(done)return;const k=+b.dataset.k;const ok=k===q[3];if(ok){done=true;qok+=1;b.classList.add('ok');tone(true);add(active,1);setTimeout(()=>{qi++;drawQ()},1400)}else{b.classList.add('no');tone(false);qok=qok}}))}
+drawQ();
+
+/* reflection */
+const pos=[[150,74],[256,66],[102,180],[294,142],[200,112],[230,204]];
+let stu=null;
+$('#students').innerHTML=[1,2,3,4,5,6].map(i=>`<button class="stu" data-i="${i-1}">${i<=3?'🍃':'💧'} Оқушы ${i}</button>`).join('');
+$$('.stu').forEach(b=>b.addEventListener('click',()=>{$$('.stu').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');stu=+b.dataset.i}));
+$$('.col').forEach(b=>b.addEventListener('click',()=>{if(stu===null){$$('.stu').forEach(x=>{x.classList.add('shake');setTimeout(()=>x.classList.remove('shake'),400)});return}const p=pos[stu];const old=document.getElementById('lf'+stu);if(old)old.remove();const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.id='lf'+stu;g.setAttribute('transform',`translate(${p[0]} ${p[1]})`);g.innerHTML=`<g class="leafg"><path d="M0 -34 C26 -26 30 6 0 34 C-30 6 -26 -26 0 -34Z" fill="${b.dataset.c}" stroke="rgba(0,0,0,.15)" stroke-width="2"/><path d="M0 -30 L0 30" stroke="rgba(0,0,0,.2)" stroke-width="2"/><text y="6" text-anchor="middle" font-family="Unbounded" font-weight="900" font-size="15" fill="#0a1f44">${stu+1}</text></g>`;$('#leaves').appendChild(g);const sb=$(`.stu[data-i="${stu}"]`);sb.classList.add('done');sb.classList.remove('sel');tone(true);stu=null;const n=$('#leaves').children.length;$('#leafCount').textContent=n+' / 6 жапырақ';if(n===6){$('#leafCount').textContent='🌳 Тілек ағашы жасарды! Рахмет, балалар!';confetti(100)}}));
+
+/* timer */
+let tleft=0,tint=null;
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+$$('.timer [data-m]').forEach(b=>b.addEventListener('click',()=>{tleft=+b.dataset.m*60;$('#tt').textContent=fmt(tleft);clearInterval(tint);tint=setInterval(()=>{tleft--;$('#tt').textContent=fmt(Math.max(tleft,0));if(tleft<=0){clearInterval(tint);tone(false);const t=$('#timer');t.classList.remove('ring-on');void t.offsetWidth;t.classList.add('ring-on')}},1000)}));
+$('#tstop').addEventListener('click',()=>{clearInterval(tint);tleft=0;$('#tt').textContent='00:00'});
+
+renderScore();
+})();
+</script>
+</body>
+</html>
